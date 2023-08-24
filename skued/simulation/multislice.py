@@ -49,9 +49,9 @@ def multislice(crystal, thickness = None, energy = 90, shape = (512, 512), resol
     # Note that we require that the final extent be a multiple of the periodicity
     dx, dy = resolution/2, resolution/2
     x_extent, y_extent = dx * shape[0], dy * shape[1]   # Might not be periodic
-    x_extent = round(x_extent / period_x) * period_x
-    y_extent = round(y_extent / period_y) * period_y
-    extent = 10*period_x*period_y
+    x_extent = round(x_extent / period_x) * period_x # not used
+    y_extent = round(y_extent / period_y) * period_y # not used
+    extent = 10*period_x*period_y # a grid of 10 xy unit cells is used
     
     # Determine slice thickness as a divider of the unitcell period in z
     # We try to have the slice thickness be close to 1 angstroms
@@ -71,10 +71,10 @@ def multislice(crystal, thickness = None, energy = 90, shape = (512, 512), resol
     # Calculate transmission functions through the slices
     # TODO: is it enough to only bandwidth-limit the potential slices or must this be
     #       done for transmission functions as well?
-    slices = [limit_bandwidth(np.exp(1j * interaction_parameter(energy) * p), k, (1/2)*k.max()) 
+    slices = [limit_bandwidth(np.exp(1j * interaction_parameter(energy) * p), k, (1/2)*k.max())
               for p in potential_slices(crystal, xx, yy, n_slices = n_slices)]
     
-    wavefunction = np.ones_like(xx, dtype = np.complex)
+    wavefunction = np.ones_like(xx, dtype = np.complex) # wavefunction not normalized
     initial_intensity = np.sum(np.abs(wavefunction)**2)
     propagator = np.exp(1j * np.pi * electron_wavelength(energy) * (period_z / n_slices) * k**2)
 
@@ -135,7 +135,7 @@ def potential_slices(crystal, X, Y, n_slices):
         Real-space coordinates.
     n_slices : int
         Number of slices to computed inside the unit cell.
-    
+
     Yields
     ------
     potential : `~numpy.ndarray`
